@@ -50,7 +50,7 @@ export function createGallery(images) {
     )
     .join('');
 
-  gallery.innerHTML = createMarkup;
+  gallery.insertAdjacentHTML('beforeend', createMarkup);
   lightbox.refresh();
 }
 
@@ -67,9 +67,9 @@ export function hideLoader() {
 }
 
 export function showLoadMoreButton() {
-  loadMoreBtn.classList.remove('load-more-hidden');
+  loadMoreBtn.classList.remove('hidden');
 }
 
 export function hideLoadMoreButton() {
-  loadMoreBtn.classList.add('load-more-hidden');
+  loadMoreBtn.classList.add('hidden');
 }

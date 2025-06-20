@@ -34,7 +34,7 @@ async function formSubmit(event) {
       timeout: 3000,
     });
   }
-  currentQuery = query;
+  currentQuery = searchImage;
   currentPage = 1;
   clearGallery();
   showLoader();
@@ -42,6 +42,7 @@ async function formSubmit(event) {
 
   try {
     const data = await getImagesByQuery(currentQuery, currentPage, perPage);
+
     if (data.hits.length === 0) {
       iziToast.error({
         message: 'Sorry, no images found. Please try again!',
@@ -51,8 +52,16 @@ async function formSubmit(event) {
       return;
     }
     createGallery(data.hits);
-    if (data.totalHits > perPage) {
+
+    const totalPages = Math.ceil(data.totalHits / perPage);
+    if (currentPage < totalPages) {
       showLoadMoreButton();
+    } else {
+      iziToast.info({
+        message: 'All images loaded.',
+        position: 'topRight',
+        color: 'yellow',
+      });
     }
   } catch (error) {
     iziToast.error({
@@ -68,7 +77,7 @@ async function formSubmit(event) {
 async function handleClick() {
   currentPage += 1;
   showLoader();
-  hideLoader();
+  hideLoadMoreButton();
 
   try {
     const data = await getImagesByQuery(currentQuery, currentPage, perPage);
@@ -86,10 +95,16 @@ async function handleClick() {
     const totalPages = Math.ceil(data.totalHits / perPage);
     if (currentPage < totalPages) {
       showLoadMoreButton();
+    } else {
+      iziToast.info({
+        message: "We're sorry, but you've reached the end of search results.",
+        position: 'topRight',
+        color: 'yellow',
+      });
     }
   } catch (error) {
     iziToast.error({
-      message: "We're sorry, but you've reached the end of search results.",
+      message: 'Something went wrong!',
       position: 'topRight',
       color: 'red',
     });
